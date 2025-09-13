@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>document.documentElement.classList.add('force-motion');</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cat-Nitro, the place for games, cats, and stuff">
+  <meta name="keywords" content="pwa">
+  <meta name="author" content="Cat-Nitro">
+  <script defer data-domain="kugelfoods.com" src="https://plausible.io/js/script.js"></script>
+  <meta name="copyright" content="CatMan">
+  <meta name="robots" content="follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cat-Nitro Games">
+  <meta property="og:description" content="Cat-Nitro, the place for games, cats, and stuff">
+  <meta name="theme-color" content="#000000">
+  <title>Cat-Nitro | Games</title>
+  <link rel="icon" type="image/x-icon" href="assets/img/nitro_modern-white_1080.png">
+  <link rel="stylesheet" href="css.css?v=4.6">
+  <script defer data-domain="crownprincehospital.com" src="https://plausible.io/js/script.outbound-links.js"></script>
+  <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+<style>
+/* =========================================================
+   Cat-Nitro unified styles (header, lists, MOTD, settings,
+   overlay/iframe, Ko-fi buttons, footer, helpers)
+   ========================================================= */
+
+/* -------------------- CSS Variables -------------------- */
+:root{
+  /* site theme */
+  --theme:#000;
+  --txt-col:#fff;
+
+  /* hover effects */
+  --hover-scale:1.2;
+  --hover-duration:.25s;
+  --text-pop-scale:1.05;
+  --text-hover-duration:.5s;
+  --text-hover-color:#1eff00;
+
+  /* header */
+  --hdr-h:64px;
+  --hdr-offset:20px;
+  --hdr-bg:rgba(0,0,0,0.55);
+  --hdr-shadow:0 4px 15px rgba(0,0,0,.35);
+  --hdr-radius:12px;
+  --logo-size:48px;
+  --reveal-extra:120px;
+  --intro-time:.6s;
+
+  /* overlay (iframe player) */
+  --io-z:20000;
+  --io-border:#4400ff;
+  --io-pink:#d400ff;
+  --io-accent:#1eff00;
+  --io-chrome:rgba(0,0,0,.78);
+  --io-radius:14px;
+  --io-bar-h:48px;
+  --io-min-h:44px;
+  --io-shadow:0 12px 30px rgba(0,0,0,.7);
+
+  /* music widget geometry (widget CSS defines width/tab; we need its z-index only here) */
+  --mw-tab:22px;
+  --mw-width:300px;
+}
+
+/* -------------------- Base / Resets -------------------- */
+*{box-sizing:border-box}
+html,body{height:100%}
+a{color:var(--theme);text-decoration:none}
+body{
+  margin:0;
+  padding-top: calc(var(--hdr-h) + var(--hdr-offset));
+  font-family:system-ui, Arial, sans-serif;
+  background:#000;
+  color:var(--txt-col);
+}
+
+/* keep header & music widget on top and clickable */
+header.site-header{ z-index: 9999; }
+.music-widget{ z-index: 10000; } /* music widget CSS lives in css.css; we only set the layer here */
+
+/* prevent page scroll when overlay is open (JS toggles these) */
+html.cn-io-scrolllock,
+body.cn-io-scrolllock{
+  overflow:hidden !important;
+  overscroll-behavior:none;
+}
+
+/* -------------------- Header (hover-reveal) -------------------- */
+@keyframes slideIn{
+  0%   { transform: translate(-50%, calc(-1 * (var(--hdr-h) + 20px))) scale(.5); }
+  100% { transform: translate(-50%, 0) scale(1); }
+}
+header.site-header{
+  position:fixed;
+  top:10px; left:50%;
+  transform:translate(-50%,0);
+  height:var(--hdr-h);
+  display:flex; align-items:center;
+  padding:0 20px;
+  background:var(--hdr-bg);
+  backdrop-filter:blur(6px);
+  border-radius:var(--hdr-radius);
+  box-shadow:var(--hdr-shadow);
+  transform-origin:top center;
+}
+header.site-header.animated-in{ animation: slideIn var(--intro-time) cubic-bezier(.42,0,.58,1) forwards; }
+header.site-header ul{ display:flex; gap:10px; list-style:none; margin:0; padding:0; }
+header.site-header a.logo-link{
+  position:relative; display:flex; align-items:center;
+  height:var(--logo-size); width:var(--logo-size);
+  overflow:hidden; transition:width .25s ease; color:var(--txt-col);
+}
+header.site-header li:hover a.logo-link{ width:calc(var(--logo-size) + var(--reveal-extra)); }
+header.site-header img{ height:100%; width:auto; transition:opacity .25s ease; }
+header.site-header img.hover{ position:absolute; top:0; left:0; opacity:0; }
+header.site-header li:hover img.hover{ opacity:1; }
+header.site-header li:hover img.default{ opacity:0; }
+header.site-header span{ margin-left:10px; white-space:nowrap; opacity:0; transition:opacity .25s ease; font-size:.95rem; line-height:1; }
+header.site-header li:hover span{ opacity:1; }
+
+/* -------------------- Lists / Cards / Search -------------------- */
+@keyframes scrollText{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.game-list a,.emu-list a,.recent-list a{
+  width:22%; padding:4px 0; border-radius:15px; border-width:1px;
+  margin:4px 0; display:inline-block; position:relative;
+  transition:transform var(--hover-duration) ease, box-shadow var(--hover-duration) ease;
+  will-change:transform;
+}
+.game-list a:hover,.emu-list a:hover,.recent-list a:hover{
+  transform:scale(var(--hover-scale)); z-index:10; box-shadow:0 0 12px 4px var(--text-hover-color);
+}
+.game-list .link,.emu-list .link,h1:not(.flick),h2,h3,p.link{
+  transition:transform var(--text-hover-duration) ease, color var(--text-hover-duration) ease, text-shadow var(--text-hover-duration) ease;
+}
+.game-list a:hover .link,.emu-list a:hover .link,h1:not(.flick):hover,h2:hover,h3:hover,p.link:hover{
+  color:var(--text-hover-color)!important;
+  text-shadow:0 0 10px var(--text-hover-color),0 0 20px var(--text-hover-color),0 0 30px var(--text-hover-color);
+  transform:translateY(-2px) scale(var(--text-pop-scale));
+}
+
+/* search */
+.search-bar{
+  width:60%; max-width:500px; padding:10px 15px; font-size:20px;
+  background:#000; color:#d400ff; border:1px solid #4400ff; border-radius:15px; outline:none;
+}
+.search-bar::placeholder{ color:#4400ff; }
+/* hide "recent" section while searching */
+body.searching #recentHeading,
+body.searching .recent-list{ display:none!important; }
+
+/* misc tag */
+.discord{ background-color:#171f39; color:#ffffff; }
+
+/* -------------------- Footer chip -------------------- */
+footer.site-footer{
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  padding:8px 16px; background:rgba(0,0,0,0.6); border-radius:12px 12px 0 0; z-index:9999;
+}
+footer.site-footer a{ color:#06c; text-decoration:underline; }
+
+/* -------------------- Settings panel (minimal skin) -------------------- */
+#cn-settings-btn{
+  position:fixed; right:14px; top:14px; z-index:10001;
+  border:1px solid #4400ff; background:#000; color:#d400ff; font-weight:800;
+  padding:6px 10px; border-radius:10px; cursor:pointer;
+}
+#cn-settings-btn:hover{ color:#1eff00; border-color:#1eff00; box-shadow:0 0 10px #1eff00; transform:translateY(-1px) }
+#cn-settings-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:10000; opacity:0; transition:opacity .2s ease;
+}
+#cn-settings-backdrop[hidden]{ display:none }
+#cn-settings-backdrop.open{ opacity:1 }
+#cn-settings-panel{
+  position:fixed; right:14px; top:56px; width:min(92vw,420px); max-height:80vh; overflow:auto;
+  background:#050505; border:1px solid #4400ff; border-radius:12px; z-index:10002;
+  transform:translateY(-10px); opacity:0; transition:.2s ease;
+}
+#cn-settings-panel[hidden]{ display:none }
+#cn-settings-panel.open{ transform:translateY(0); opacity:1 }
+.cn-sp__header{ display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #4400ff; }
+.cn-sp__title{ margin:0; color:#d400ff }
+.cn-sp__close{
+  border:1px solid #4400ff; background:#000; color:#d400ff; font-weight:800; padding:6px 10px; border-radius:10px; cursor:pointer;
+}
+.cn-sp__body{ padding:12px }
+.cn-card{ border:1px solid #222; border-radius:10px; padding:12px; margin-bottom:14px; background:#0a0a0a }
+.cn-field{ display:flex; flex-direction:column; gap:6px; margin:10px 0 }
+.cn-label{ font-size:.9rem; opacity:.9 }
+.cn-input,.cn-input-url,.cn-select{
+  width:100%; padding:8px 10px; background:#000; color:#d400ff; border:1px solid #4400ff; border-radius:10px; outline:none;
+}
+.cn-row{ display:flex; gap:8px; flex-wrap:wrap }
+.cn-btn{
+  border:1px solid #4400ff; background:#000; color:#d400ff; font-weight:800; padding:8px 12px; border-radius:10px; cursor:pointer;
+}
+.cn-btn:hover{ color:#1eff00; border-color:#1eff00; box-shadow:0 0 10px #1eff00; transform:translateY(-1px) }
+
+/* -------------------- MOTD (banner with open/close animation) -------------------- */
+.motd{ position:relative; margin:12px auto; max-width:min(900px, 92vw); }
+.motd__inner{
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  background:rgba(0,0,0,.75); border:1px solid #4400ff; border-radius:12px;
+  overflow:hidden; animation: motd-expand .35s ease both;
+}
+.motd__label{ font-weight:800; color:#d400ff }
+.motd__text{ white-space:nowrap; overflow:hidden; display:inline-block; min-width:2ch }
+.motd__text.is-typing{  }
+.motd__close{
+  margin-left:auto; border:1px solid #4400ff; background:#000; color:#d400ff; border-radius:10px; padding:4px 10px; cursor:pointer;
+}
+.motd.is-closing .motd__inner{ animation: motd-collapse .25s ease both; }
+@keyframes motd-expand{ from{ transform:translateY(-8px); opacity:0 } to{ transform:none; opacity:1 } }
+@keyframes motd-collapse{ from{ transform:none; opacity:1 } to{ transform:translateY(-8px); opacity:0 } }
+
+/* -------------------- IFrame Overlay (player) -------------------- */
+/* container */
+#cn-io{
+  position:fixed; top:10px; right:10px; bottom:10px; left:10px;
+  background:#000; border:1px solid var(--io-border);
+  border-radius:var(--io-radius); box-shadow:var(--io-shadow);
+  z-index:var(--io-z);
+  display:grid; grid-template-rows: var(--io-bar-h) 1fr;
+  overflow:hidden;
+  transform:translateY(110%); opacity:0;
+  transition: transform .35s ease, opacity .35s ease;
+  contain: layout size paint;
+}
+#cn-io.open{ transform: translateY(0); opacity:1; }
+
+/* top chrome */
+#cn-io .cn-io__chrome{
+  display:flex; align-items:center; gap:8px;
+  padding:8px 10px; background:var(--io-chrome);
+  border-bottom:1px solid var(--io-border);
+}
+.cn-io__title{
+  color:var(--io-pink); font-weight:700; max-width:60vw;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  text-shadow:0 0 10px #003cff,0 0 20px #0066ff,0 0 30px #0064e6;
+}
+.cn-io__spacer{ flex:1; }
+.cn-io__btn,
+.cn-io-mini__btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  background:#000; color:var(--io-pink);
+  border:1px solid var(--io-border);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:.95rem; line-height:1; font-weight:700;
+  cursor:pointer;
+  transition: transform .25s ease, box-shadow .25s ease, color .5s ease, border-color .25s ease;
+}
+
+.cn-io__btn:hover,.cn-io-mini__btn:hover{
+  color:var(--io-accent); border-color:var(--io-accent);
+  box-shadow:0 0 10px var(--io-accent),0 0 20px #37ff00,0 0 30px #0ce600,0 0 40px #11ee01;
+  transform: translateY(-1px) scale(1.05);
+}
+.cn-io__btn--danger:hover,.cn-io-mini__btn--danger:hover{
+  color:#fff; border-color:#ff3b3b; box-shadow:0 0 15px #ff3b3b;
+}
+
+/* Ko-fi buttons (compact sizing) */
+.cn-io__btn--kofi{
+  display:inline-flex; align-items:center; justify-content:center;
+  background:#000;
+  border:1px solid #ff5e5b;
+  color:#ffb3ae;
+  padding:4px 8px;          /* smaller */
+  font-size:.9rem;          /* smaller */
+  font-weight:800;
+}
+.cn-io__btn--kofi:hover{
+  color:#fff0f0; border-color:#ff5e5b;
+  box-shadow:0 0 12px rgba(255,94,91,.8), 0 0 24px rgba(255,94,91,.4);
+  transform: translateY(-1px) scale(1.05);
+}
+
+.cn-io-mini__btn--kofi{
+  display:inline-flex; align-items:center; justify-content:center;
+  background:#000;
+  border:1px solid #ff5e5b;
+  color:#ffb3ae;
+  padding:2px 6px;          /* extra compact for the mini strip */
+  font-size:.9rem;
+  font-weight:900;
+}
+.cn-io-mini__btn--kofi:hover{
+  color:#fff; border-color:#ff5e5b; box-shadow:0 0 12px rgba(255,94,91,.8);
+}
+
+/* iframe area */
+.cn-io__content{ position:relative; min-height:0; }
+#cnIoFrame{
+  position:absolute; inset:0; width:100%; height:100%;
+  border:0; background:#000;
+}
+
+/* minimized strip */
+#cn-io-mini{
+  position:fixed;
+  left:10px;
+  right:calc(var(--mw-width) + var(--mw-tab) + 10px); /* leaves room for music widget */
+  bottom:calc(env(safe-area-inset-bottom, 0px) + 12px);
+  height:var(--io-min-h);
+  background:var(--io-chrome);
+  border:1px solid var(--io-border);
+  border-radius:var(--io-radius);
+  box-shadow:var(--io-shadow);
+  z-index:9999;
+  display:flex; align-items:center; gap:8px; padding:6px 10px;
+
+  /* default off-canvas; we’ll pop it up when not hidden */
+  transform:translateY(calc(100% + 12px));
+  opacity:0;
+  transition: transform .35s ease, opacity .35s ease;
+}
+
+/* hide when either attribute says so */
+#cn-io-mini[hidden],
+#cn-io-mini[aria-hidden="true"]{
+  display:none !important;
+}
+
+/* IMPORTANT: if it isn’t hidden, it’s visible (no JS .show class required) */
+#cn-io-mini:not([hidden]):not([aria-hidden="true"]){
+  transform:translateY(0);
+  opacity:1;
+}
+
+.cn-io-mini__title{
+  color:var(--io-pink); font-weight:700;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.cn-io-mini__spacer{ flex:1; }
+
+
+/* background blur when minimized */
+body.cn-io-min .game-list,
+body.cn-io-min .recent-list,
+body.cn-io-min #recentHeading,
+body.cn-io-min .emu-list,
+body.cn-io-min #emuHeading{
+  filter: blur(2px) brightness(0.6);
+  pointer-events:none;
+}
+
+/* click-covers (block page when a game is running) */
+.cn-cover{
+  position:fixed; z-index:9996; background:rgba(0,0,0,0); pointer-events:auto;
+}
+
+/* “close your game to select another” bubble */
+#cn-io-blocker{
+  position:fixed; left:0; top:0; width:0; height:0;
+  z-index:9998; display:none; place-items:center; pointer-events:none;
+}
+#cn-io-blocker.show{ display:grid; }
+#cn-io-blocker .cn-io-blocker__msg{
+  pointer-events:auto; background:rgba(0,0,0,.85); color:var(--io-accent);
+  border:1px solid var(--io-border); border-radius:12px; padding:12px 16px; font-weight:800; text-align:center;
+  text-shadow:0 0 10px var(--io-accent); box-shadow:var(--io-shadow); max-width:min(80vw,600px);
+}
+
+/* -------------------- Small screens -------------------- */
+@media (max-width:720px){
+  .search-bar{ width:92%; }
+  .game-list a,.emu-list a,.recent-list a{ width:46%; }
+  #cn-io{ top:8px; right:8px; bottom:8px; left:8px; }
+}
+
+/* -------------------- Reduced motion -------------------- */
+/* -------------------- Reduced motion (scoped, respects .force-motion) -------------------- */
+@media (prefers-reduced-motion: reduce){
+  /* If .force-motion is present, DO NOT reduce motion */
+  html.force-motion * { /* no reductions */ }
+
+  /* Otherwise: keep micro-transitions short, disable only big/continuous animations */
+  html:not(.force-motion) * {
+    /* don't blanket-kill all transitions; keep tiny ones so UI isn't jarring */
+    transition-duration: .08s !important;
+  }
+
+  /* Disable your heavy/continuous animations when not forcing motion */
+  html:not(.force-motion) header.site-header.animated-in { animation: none !important; transform: none !important; }
+  html:not(.force-motion) .flick { animation: none !important; }
+  html:not(.force-motion) .motd__inner,
+  html:not(.force-motion) .motd.is-open .motd__inner,
+  html:not(.force-motion) .motd.is-closing .motd__inner {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  html:not(.force-motion) .motd__text,
+  html:not(.force-motion) .motd__text.is-typing {
+    animation: none !important;
+    border-right-color: transparent !important;
+  }
+}
+
+#cnIoMin{ display:none !important; }
+</style>
+
+</head>
+<body>
+    <!-- Settings: floating button + panel (top-right) -->
+  <button id="cn-settings-btn" title="Settings" aria-label="Settings">⚙️</button>
+  <div id="cn-settings-backdrop" hidden></div>
+
+  <div id="cn-settings-panel" role="dialog" aria-modal="true" aria-labelledby="cnSettingsTitle" hidden>
+    <div class="cn-sp__header">
+      <h3 id="cnSettingsTitle" class="cn-sp__title">Settings</h3>
+      <button class="cn-sp__close" id="cnSettingsClose">Close</button>
+    </div>
+
+    <div class="cn-sp__body">
+      <div class="cn-card">
+        <h4>Tab Cloaker</h4>
+
+        <div class="cn-field">
+          <label for="cnTitle" class="cn-label">Tab Title</label>
+          <input id="cnTitle" class="cn-input" type="text" placeholder="Enter a tab title">
+        </div>
+
+        <div class="cn-field">
+          <label for="cnIcon" class="cn-label">Tab Icon (favicon URL)</label>
+          <input id="cnIcon" class="cn-input-url" type="url" placeholder="https://example.com/icon.png">
+          <div class="cn-hint">Use a direct image URL (.png/.ico/.svg). Defaults to your current favicon.</div>
+        </div>
+
+        <div class="cn-row">
+          <button class="cn-btn" id="cnSave">Save</button>
+          <button class="cn-btn" id="cnApply">Apply</button>
+          <button class="cn-btn" id="cnReset">Reset</button>
+        </div>
+      </div>
+            <!-- Presets -->
+      <div class="cn-card">
+        <h4>Presets</h4>
+
+        <div class="cn-field">
+          <label for="cnPreset" class="cn-label">Choose a site to emulate</label>
+          <select id="cnPreset" class="cn-select">
+            <option value="">— Select a preset —</option>
+            <!-- options populated by JS so it’s easy to expand -->
+          </select>
+        </div>
+
+        <div class="cn-row">
+          <button class="cn-btn" id="cnPresetApply">Use Preset</button>
+          <button class="cn-btn" id="cnPresetSave">Use + Save</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <header class="site-header" id="mainHeader">
+    <ul>
+      <li><a href="games/GBA/index.html" class="logo-link"><img src="assets/img/gameboy-emu-icon.png" alt="Games" class="default"><img src="assets/img/gameboy-emu-icon.png" alt="" class="hover"><span>Gameboy Emu</span></a></li>
+      <li><a href="https://engine.kugelfoods.com" class="logo-link"><img src="assets/img/free-bird_1080.png" alt="Games" class="default"><img src="assets/img/free-bird_1080.png" alt="" class="hover"><span>Freebird</span></a></li>
+      <li><a href="/main.html" class="logo-link"><img src="assets/img/nitro_modern-white_1080.png" alt="Games" class="default"><img src="assets/img/nitro_modern-white_1080.png" alt="" class="hover"><span>Cat-Nitro</span></a></li>
+      <li><a href="https://discord.gg/5rxbeUuEhZ" class="logo-link"><img src="assets/img/discord_512.png" alt="Discord" class="default"><img src="assets/img/discord_512.png" alt="" class="hover"><span>Discord</span></a></li>
+      <li><a href="/partners.html" class="logo-link"><img src="assets/img/partners.png" alt="Discord" class="default"><img src="assets/img/partners.png" alt="" class="hover"><span>Partners</span></a></li>
+    </ul>
+  </header>
+
+  <!-- MOTD (Message of the Day) -->
+  <div class="motd" id="motd" data-version="2025-09-08" aria-live="polite">
+    <div class="motd__inner" role="status" aria-atomic="true">
+      <span class="motd__label">MOTD</span>
+      <span
+        class="motd__text"
+        id="motdText"
+        data-text="Twin i fixed chrome dino, ur welcome hunter"
+        aria-label="ts is pointless"
+      ></span>
+      <button class="motd__close" id="motdClose" aria-label="Dismiss message" title="Dismiss">✕</button>
+    </div>
+  </div>
+
+
+
+  <center>
+    <img src="assets/img/nitro_modern-white_1080.png" alt="Cat-Nitro logo" style="width:125px;height:125px;margin-top:20px">
+    <h1 class="flick"><b>Cat-Nitro Games</b></h1>
+  </center>
+  <hr style="height:2px;border:0;background:blue">
+  <center>
+    <input id="gameSearch" class="search-bar" placeholder="Search games or emulators… (e.g., retro bowl)">
+  </center>
+  <hr style="height:2px;border:0;background:blue">
+  <font color="blue"><h1 id="recentHeading" style="display:none"><center>Recently Played</center></h1></font>
+  <center class="recent-list" style="display:none"></center>
+  <hr style="height:2px;border:0;background:blue">
+    <center class="game-list">
+        <a href="games/10-minutes-till-dawn/index.html">
+            <b><p class="link">10 Minutes Till Dawn</p></b>
+        </a>
+        <a href="games/99balls/index.html">
+            <b><p class="link">99 Balls</p></b>
+        </a>
+      <a href="games/100ng/index.html">
+          <b><p class="link">100 Player Pong</p></b>
+      </a>
+      <a href="games/2048/index.html">
+          <b><p class="link">2048</p></b> 
+      </a>
+      <a href="games/achievementunlocked/index.html">
+          <b><p class="link">Achievement Unlocked</p></b> 
+      </a>
+      <a href="games/adarkroom/index.html">
+          <b><p class="link">A Dark Room</p></b> 
+      </a>
+      <a href="games/ages-of-conflict/index.html">
+          <b><p class="link">Ages Of Conflict</p></b> 
+      </a>
+      <a href="games/amazing-rope-police/index.html">
+          <b><p class="link">Amazing Rope Police</p></b> 
+      </a>
+      <a href="games/arcadewizard/index.html">
+        <b><p class="link">Arcade Wizard</p></b> 
+    </a>
+    <a href="games/avalanche/index.html">
+        <b><p class="link">Avalanche</p></b> 
+    </a>
+    <a href="games/awesometanks2/index.html">
+        <b><p class="link">Awesome Tanks 2</p></b> 
+    </a>
+      <a href="games/backrooms-2d/index.html">
+          <b><p class="link">Backrooms</p></b> 
+      </a>
+      <a href="games/baldis-basics/index.html">
+        <b><p class="link">Baldis Basics</p></b> 
+    </a>
+      <a href="games/baldisbasicsfieldtripcampingremake/">
+        <b><p class="link">Baldis Basics Camping</p></b> 
+    </a>
+        <a href="games/basket-random/index.html">
+          <b><p class="link">Basket Random</p></b> 
+      </a>
+      <a href="games/bitlife/index.html">
+          <b><p class="link">Bitlife</p></b> 
+      </a>
+      <a href="games/boxing-random/index.html">
+          <b><p class="link">Boxing Random</p></b> 
+      </a>
+      <a href="games/burger-and-frights/index.html">
+          <b><p class="link">Burger And Frights</p></b> 
+      </a>
+      <a href="games/cheesypuffclicker/index.html">
+        <b><p class="link">Cheesy Poof Clicker</p></b> 
+    </a>
+      <a href="games/chrome-dino/index.html">
+          <b><p class="link">Chrome Dino</p></b> 
+      </a>
+      <a href="games/circlo/index.html">
+        <b><p class="link">CirclO</p></b> 
+        </a>
+      <a href="games\city-car-driving-stunt-master\index.html">
+        <b><p class="link">City Car Stunt Master</p></b> 
+        </a>
+      <a href="games/connect3/index.html">
+          <b><p class="link">Connect 3</p></b> 
+      </a>
+      <a href="games/cookie-clicker/index.html">
+          <b><p class="link">Cookie Clicker</p></b> 
+      </a>
+      <a href="games/core-ball/index.html">
+          <b><p class="link">Core Ball</p></b> 
+      </a>
+      <a href="games/crossyroad/index.html">
+          <b><p class="link">CrossyRoad</p></b> 
+      </a>
+      <a href="games/csgo-clicker/index.html">
+          <b><p class="link">CS:GO Clicker</p></b> 
+      </a>
+      <a href="games/ctr/index.html">
+          <b><p class="link">Cut the Rope</p></b> 
+      </a>
+      <a href="games/ctr-holiday/index.html">
+          <b><p class="link">Cut the Rope Holiday</p></b> 
+      </a>
+      <a href="games/ctr-tr/index.html">
+          <b><p class="link">Cut the Rope Time Travel</p></b> 
+      </a>
+      <a href="games/cubefield/index.html">
+          <b><p class="link">Cubefield</p></b> 
+      </a>
+      <a href="games/dante/index.html">
+          <b><p class="link">Dante</p></b> 
+      </a>
+      <a href="games/deathcario/index.html">
+          <b><p class="link">Death Car IO</p></b> 
+      </a>
+      <a href="games/death-run-3d/index.html">
+        <b><p class="link">Death Run 3D</p></b> 
+    </a>
+          <a href="games/deltarune/index.html">
+        <b><p class="link">Deltarune</p></b> 
+    </a>
+      <a href="games/DogeMiner/index.html">
+          <b><p class="link">Doge Miner</p></b> 
+      </a>
+      <a href="games/dragon-vs-bricks/index.html">
+          <b><p class="link">Drangon VS Bricks</p></b> 
+      </a>
+    <a href="games/drive-mad/index.html">
+        <b><p class="link">Drive Mad</p></b> 
+    </a>
+    <a href="games/ducklife1/index.html">
+        <b><p class="link">Duck Life 1</p></b> 
+    </a>
+    <a href="https://cat-nitro.github.io/DuckLife4/">
+        <b><p class="link">Duck Life 4</p></b> 
+    </a>
+    </a>
+      <a href="games/edge-surf/index.html">
+          <b><p class="link">Edge Surf</p></b> 
+      </a>
+      <a href="games/Epic Tower Defense/index.html">
+        <b><p class="link">Epic Tower Defense</p></b> 
+    </a>
+      <a href="games/evil-glitch/index.html">
+          <b><p class="link">Evil Glitch</p></b> 
+      </a>
+      <a href="games/evolution/index.html">
+        <b><p class="link">Evolution</p></b> 
+    </a>
+      <a href="games/exo/index.html">
+          <b><p class="link">Exo</p></b> 
+      </a>
+      <a href="games/fairsquares/index.html">
+          <b><p class="link">Fair Squares</p></b> 
+      </a>
+      <a href="games/flappy-bird/index.html">
+        <b><p class="link">Flappy Bird</p></b> 
+    </a>
+    <a href="games/flashtetris/index.html">
+        <b><p class="link">Flash Tetris</p></b> 
+    </a>
+      <a href="games/game-inside/index.html">
+          <b><p class="link">Game Inside a Game</p></b> 
+      </a>
+      <a href="games/geodash/index.html">
+          <b><p class="link">Geometry Dash (Scratch)</p></b> 
+      </a>
+            <a href="games/GetawayShootout/index.html">
+          <b><p class="link">Getaway Shootout</p></b> 
+      </a>
+     <a href="games/getting-over-it/GOI.html">
+          <b><p class="link">Getting Over It (Scratch)</p></b> 
+      </a>
+      <a href="games/go-ball/index.html">
+          <b><p class="link">Go Ball</p></b> 
+      </a>
+      <a href="games/google-feud/index.html">
+        <b><p class="link">Google Feud</p></b> 
+    </a>
+      <a href="games/halfLife/index.html">
+          <b><p class="link">Half Life 1</p></b> 
+      </a>
+      <a href="games/helios/index.html">
+        <b><p class="link">Helios</p></b> 
+    </a>
+      <a href="games/hba/index.html">
+          <b><p class="link">Hover Bot Arena</p></b> 
+      </a>
+      <a href="games/hextris/index.html">
+          <b><p class="link">Hextris</p></b> 
+      </a>
+      <a href="games/houseofhazards/index.html">
+        <b><p class="link">House Of Hazards</p></b> 
+    </a>
+      <a href="games/interactivebuddy/index.html">
+        <b><p class="link">Interactive Buddy</p></b> 
+    </a>
+      <a href="games/jetpack-joyride/index.html">
+          <b><p class="link">Jetpack Joyride</p></b> 
+      </a>
+      <a href="games/just-fall/index.html">
+        <b><p class="link">Just Fall</p></b> 
+    </a>
+    <a href="games/kitchen-gun-game/index.html">
+        <b><p class="link">Kitchen Gun Game</p></b> 
+    </a>
+      <a href="games/madalin-stunt-cars-3/index.html">
+          <b><p class="link">Madalin Stunt Cars 3</p></b> 
+      </a>
+      <a href="games/mario/index.html">
+          <b><p class="link">Mario</p></b> 
+      </a>
+      <a href="games/minecraft-classic/index.html">
+          <b><p class="link">Minecraft Classic</p></b> 
+      </a>
+      <a href="games/miniputt/index.html">
+          <b><p class="link">Mini-putt</p></b> 
+      </a>
+          <a href="https://cat-nitro.github.io/monkey-mart/">
+        <b><p class="link">Monkeh Mart</p></b> 
+    </a>
+      <a href="games/monster-tracks/index.html">
+        <b><p class="link">Monster Tracks</p></b> 
+    </a>
+      <a href="games/n-gon/index.html">
+          <b><p class="link">n-gon</p></b> 
+      </a>
+      <a href="games/Ninja Dash/index.html">
+        <b><p class="link">Ninja Dash</p></b> 
+    </a>
+      <a href="games/pacman3d/index.html">
+        <b><p class="link">Pacman 3D</p></b> 
+    </a>
+      <a href="games/pandemic2/index.html">
+          <b><p class="link">Pandemic 2</p></b> 
+      </a>
+      <a href="games/paperio2/index.html">
+          <b><p class="link">Paper.io 2</p></b> 
+      </a>
+      <a href="games/particle-clicker/index.html">
+          <b><p class="link">Particle Clicker</p></b> 
+      </a>
+      <a href="games/pixel-gun-survival/index.html">
+          <b><p class="link">Pixel Gun Survival</p></b> 
+      </a>
+      <a href="games/Polygon Fusion/index.html">
+        <b><p class="link">Polygon Fusion</p></b> 
+    </a>
+      <a href="games/portalflash/index.html">
+          <b><p class="link">Portal (Flash)</p></b> 
+      </a>
+      <a href="games/RagdollArchers/index.html">
+        <b><p class="link">Ragdoll Archers</p></b> 
+    </a>
+      <a href="games/retro-bowl/index.html">
+          <b><p class="link">Retro Bowl</p></b> 
+      </a>
+      <a href="games/rolly-vortex/index.html">
+          <b><p class="link">Rolly Vortex</p></b> 
+      </a>
+      <a href="https://cat-nitro.github.io/RooftopSnipers/">
+          <b><p class="link">Roof-Top Sniperz</p></b> 
+      </a>
+      <a href="games/sand-game/index.html">
+          <b><p class="link">Sand Game</p></b> 
+      </a>
+      <a href="games/sandboxels/index.html">
+        <b><p class="link">Sandboxels</p></b> 
+    </a>
+    <a href="games/santy-is-home/index.html">
+        <b><p class="link">Santy Is Home</p></b> 
+    </a>
+      <a href="games/scrapmetal/index.html">
+          <b><p class="link">Scrap Metal</p></b> 
+      </a>
+      <a href="games/slope/index.html">
+          <b><p class="link">Slope</p></b> 
+      </a>
+      <a href="games/Snow-Rider3D/index.html">
+          <b><p class="link">Snow Rider</p></b> 
+      </a>
+      <a href="games/snowbattle/index.html">
+          <b><p class="link">Snowbattle</p></b> 
+      </a>
+      <a href="games/soccer-random/index.html">
+        <b><p class="link">Soccer Random</p></b> 
+    </a>
+      <a href="games/space-company/index.html">
+          <b><p class="link">Space Company</p></b> 
+      </a>
+      <a href="games/spacegarden/index.html">
+          <b><p class="link">Space Garden</p></b>      
+      </a>
+      <a href="games/stack/index.html">
+        <b><p class="link">Stack</p></b> 
+    </a>
+    <a href="games/station-141/index.html">
+        <b><p class="link">Station 141</p></b> 
+    </a>
+      <a href="games/stick-duel-battle/index.html">
+          <b><p class="link">Stick Duel Battle</p></b> 
+      </a>
+      <a href="games/stickman-hook/index.html">
+        <b><p class="link">Stickman Hook</p></b> 
+    </a>
+      <a href="games/subway-surfers/index.html">
+          <b><p class="link">Subway Surfers</p></b> 
+      </a>
+    <a href="games/Super-Smash-Flash-2/index.htm">
+        <b><p class="link">Super Smash Flash 2</p></b> 
+    </a>
+      <a href="games/Super-Tic-Tac-Toe/index.html">
+        <b><p class="link">Super Tic-Tac-Toe</p></b> 
+    </a>
+      <a href="games/sm64/index.html">
+        <b><p class="link">Super Mario 64</p></b> 
+    </a>
+      <a href="games/swerve/index.html">
+          <b><p class="link">Swerve</p></b> 
+      </a>
+      <a href="games/tank-trouble-2/index.html">
+          <b><p class="link">Tank Trouble 2</p></b> 
+      </a>
+      <a href="games/tanuki-sunset/index.html">
+          <b><p class="link">Tanuki Sunset</p></b> 
+      </a>
+      <a href="games/temple-run-2/index.html">
+          <b><p class="link">Temple Run 2</p></b> 
+      </a>
+     <a href="games/territorial.html">
+        <b><p class="link">territorial.io</p></b> 
+    </a>
+      <a href="games/thebowlingclub/index.html">
+        <b><p class="link">The Bowling Club</p></b> 
+    </a>
+      <a href="games/thisistheonlylevel/index.html">
+        <b><p class="link">This Is The Only Level</p></b> 
+    </a>
+    <a href="games/timeshooter3swat/index.html">
+        <b><p class="link">Time Shooter 3: SWAT</p></b> 
+    </a>
+      <a href="games/twitch-tetris/index.html">
+          <b><p class="link">Twitch Tetris</p></b> 
+      </a>
+      <a href="games/unfairmario/index.html">
+          <b><p class="link">Unfair Mario</p></b> 
+      </a>
+      <a href="games/volley-random/index.html">
+          <b><p class="link">Volley Random</p></b> 
+      </a>
+      <a href="games/wallsmash/index.html">
+          <b><p class="link">Wall Smash</p></b> 
+      </a>
+          <a href="games/yohoho_io/index.html">
+          <b><p class="link">Yohoho.io</p></b> 
+      </a>
+  </center>
+  <font color="blue"><h1 id="emuHeading"><center>Others</center></h1></font>
+  <hr style="height:2px;border:0;background:blue">
+  <center class="emu-list">
+    <!-- <a href="https://discord.gg/5rxbeUuEhZ"><p class="link"><b>Discord</b></p></a> -->
+    <!-- <a href="games/GBA/index.html"><p class="link"><b>GameBoy Adv Emulator</b></p></a> -->
+    <!-- <a href="http://bevindooker.nicolasai.com"><p class="link"><b>Bevin Dooker Archive</b></p></a> -->
+    <!-- <a href="chatroom/chat-room/index.html"><p class="link"><b>Chatroom</b></p></a> -->
+    <!-- <a href="polls.html"><p class="link"><b>Polls!</b></p></a> -->
+    <!-- <a href="/hd_fnaf/index.html"><p class="link"><b>FNAF-Collection</b></p></a> -->
+    <a href="https://brxxn.github.io/ds-anywhere/"><p class="link"><b>DS-Anywhere</b></p></a>
+    <a href="/assets/dmca/dmca.html"><p class="link"><b>DMCA</b></p></a>
+    <a href="/LICENSE.md"><p class="link"><b>License</b></p></a>
+
+    <!-- <a href="/game_reccomendations.html"><p class="link"><b>Game Recommendations</b></p></a> -->
+  </center>
+  <!-- <div class="callout" id="webAppPopup" style="display:none">
+    <div class="callout-header">
+      Discord<span id="closePopup" class="closebtn">&times;</span>
+    </div>
+    <div class="callout-container">
+      <p class="webApp">Did you know we have a DISCORD SERVER? Join for exclusive notifications and updates.</p>
+      <a class="discord" href="https://discord.gg/5rxbeUuEhZ">Join!</a> 
+    </div>
+  </div> -->
+
+  <script src="main.js"></script>  
+  
+  <!-- <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* safely show popup if it exists */
+      const pop = document.getElementById('webAppPopup');
+      if (pop){
+        setTimeout(()=> pop.style.display='block',500);
+        pop.querySelector('#closePopup')
+            ?.addEventListener('click',()=> pop.style.display='none');
+      }
+
+      /* ★ Restore fly-in */
+      document.getElementById('mainHeader').classList.add('animated-in');
+
+      /* existing search / recent-play code … (unchanged) */
+      const searchInput   = document.getElementById('gameSearch');
+      if (!searchInput) return;         // guard if page snippet only
+
+      const gameLinks     = Array.from(document.querySelectorAll('.game-list a'));
+      const emuLinks      = Array.from(document.querySelectorAll('.emu-list  a'));
+      const emuHeading    = document.getElementById('emuHeading');
+      const recentHeading = document.getElementById('recentHeading');
+
+      const filter = () => {
+        const term = searchInput.value.trim().toLowerCase();
+        document.body.classList.toggle('searching', term.length > 0);
+        gameLinks.forEach(link =>
+          link.style.display =
+            term && !link.textContent.toLowerCase().includes(term)
+              ? 'none' : 'inline-block'
+        );
+        let showEmu = false;
+        emuLinks.forEach(link => {
+          const match = !term || link.textContent.toLowerCase().includes(term);
+          link.style.display = match ? 'inline-block' : 'none';
+          if (match) showEmu = true;
+        });
+        emuHeading.style.display = showEmu ? 'block' : 'none';
+      };
+      searchInput.addEventListener('input', filter);
+      filter();
+
+      const KEY   = 'recentlyPlayed';
+      const LIMIT = 10;
+      const wrap  = document.querySelector('.recent-list');
+      const load  = () => JSON.parse(localStorage.getItem(KEY)||'[]');
+      const save  = arr => localStorage.setItem(KEY, JSON.stringify(arr));
+      const render = () => {
+        const items = load();
+        if (!wrap) return;
+        wrap.innerHTML = '';
+        recentHeading.style.display = items.length ? 'block':'none';
+        wrap.style.display          = items.length ? 'block':'none';
+        items.forEach(({href,text}) => {
+          const a   = document.createElement('a');
+          a.href    = href;
+          a.innerHTML = `<b><p class="link">${text}</p></b>`;
+          wrap.appendChild(a);
+        });
+      };
+      const add = link => {
+        let arr = load().filter(i => i.href !== link.href);
+        arr.unshift({href:link.href, text:link.textContent.trim()});
+        if (arr.length > LIMIT) arr.pop();
+        save(arr); render();
+      };
+      gameLinks.forEach(a => a.addEventListener('click', () => add(a)));
+      render();
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => document.getElementById('webAppPopup').style.display = 'block', 500);
+      document.getElementById('closePopup').addEventListener('click', () =>
+        document.getElementById('webAppPopup').style.display = 'none'
+      );
+
+      document.getElementById('mainHeader').classList.add('animated-in');
+
+      const searchInput   = document.getElementById('gameSearch');
+      const gameLinks     = Array.from(document.querySelectorAll('.game-list a'));
+      const emuLinks      = Array.from(document.querySelectorAll('.emu-list  a'));
+      const emuHeading    = document.getElementById('emuHeading');
+      const recentHeading = document.getElementById('recentHeading');
+      const filter = () => {
+        const term = searchInput.value.trim().toLowerCase();
+        document.body.classList.toggle('searching', term.length > 0);
+        gameLinks.forEach(link =>
+          link.style.display = term && !link.textContent.toLowerCase().includes(term)
+            ? 'none'
+            : 'inline-block'
+        );
+        let showEmu = false;
+        emuLinks.forEach(link => {
+          const match = !term || link.textContent.toLowerCase().includes(term);
+          link.style.display = match ? 'inline-block' : 'none';
+          if (match) showEmu = true;
+        });
+        emuHeading.style.display = showEmu ? 'block' : 'none';
+      };
+      searchInput.addEventListener('input', filter);
+      filter();
+
+      const KEY      = 'recentlyPlayed';
+      const LIMIT    = 10;
+      const wrap     = document.querySelector('.recent-list');
+      const header   = document.getElementById('recentHeading');
+      const gameAnch = Array.from(document.querySelectorAll('.game-list a'));
+      const load  = () => JSON.parse(localStorage.getItem(KEY) || '[]');
+      const save  = arr => localStorage.setItem(KEY, JSON.stringify(arr));
+      const render = () => {
+        const items = load();
+        wrap.innerHTML = '';
+        header.style.display = items.length ? 'block':'none';
+        wrap.style.display = items.length ? 'block':'none';
+        items.forEach(({href,text}) => {
+          const a = document.createElement('a');
+          a.href  = href;
+          a.innerHTML = `<b><p class="link">${text}</p></b>`;
+          wrap.appendChild(a);
+        });
+      };
+      const add = link => {
+        let arr = load().filter(i => i.href !== link.href);
+        arr.unshift({href:link.href, text:link.textContent.trim()});
+        if (arr.length > LIMIT) arr.pop();
+        save(arr); render();
+      };
+      gameAnch.forEach(a => a.addEventListener('click', () => add(a)));
+      render();
+    });
+  </script> -->
+  <hr style="height:2px;border:0;background:blue">
+  <footer>
+
+</footer>
+<div class="music-widget" id="musicWidget" aria-live="polite">
+  <div class="music-widget__tab" id="musicWidgetTab" title="Music">
+    <span>♫</span>
+  </div>
+  <a class="kofi-tab"
+   href="https://ko-fi.com/catman6112"
+   target="_blank" rel="noopener"
+   aria-label="Support on Ko-fi"><span>Ko-fi</span></a>
+  <div class="music-widget__inner">
+    <h3 class="music-widget__title">MewSic :3</h3>
+
+    <div class="music-widget__row">
+      <select id="mwPreset" aria-label="Preset tracks">
+        <option value="https://crownprincehospital.com/assets/music/sam.wav">— choose a preset —</option>
+        <option value="https://crownprincehospital.com/assets/music/Cat-Nitro_Theme_question-mark_explenation-mark.mp3">Cat-Nitro Theme!?</option>
+        <option value="https://dn721605.ca.archive.org/0/items/undertaleost_202004/Undertale%20-%20Lossless%20Soundtrack%20%28toby%20fox%29/toby%20fox%20-%20UNDERTALE%20Soundtrack%20-%2002%20Start%20Menu.mp3">Start Menu - Toby Fox</option>
+        <option value="https://dn720306.ca.archive.org/0/items/DELTARUNE_Chapter_2_OST/Chapter%202%20OST%20FLAC/39%20BIG%20SHOT.mp3">Big Shot - Toby Fox</option>
+      </select>
+    </div>
+
+    <div class="music-widget__row">
+      <input id="mwUrl" type="url" placeholder="direct .mp3/.ogg/.wav URL" spellcheck="false">
+      <button id="mwUse">Use</button>
+    </div>
+
+    <div class="music-widget__row">
+      <button id="mwPlay">Play</button>
+      <button id="mwPause">Pause</button>
+      <button id="mwStop">Stop</button>
+    </div>
+
+    <div class="music-widget__now" id="mwNow">No track loaded.</div>
+
+    <!-- Hidden audio element (keeps playing while widget is hidden) -->
+    <audio id="mwAudio" preload="none"></audio>
+  </div>
+</div>
+
+<script>
+(() => {
+  const root      = document.getElementById('musicWidget');
+  const tab       = document.getElementById('musicWidgetTab');
+  const audio     = document.getElementById('mwAudio');
+  audio.addEventListener('playing', () => {
+    setNow(audio.src);
+  });
+  audio.addEventListener('waiting', () => {
+    nowEl.textContent = 'Loading...';
+  });
+  const preset    = document.getElementById('mwPreset');
+  const urlInput  = document.getElementById('mwUrl');
+  const useBtn    = document.getElementById('mwUse');
+  const playBtn   = document.getElementById('mwPlay');
+  const pauseBtn  = document.getElementById('mwPause');
+  const stopBtn   = document.getElementById('mwStop');
+  const nowEl     = document.getElementById('mwNow');
+
+  const STORAGE_KEY = 'mw:lastSrc';
+  let hideTimer = null;
+
+  // --- helpers ----------------------------------------------------------
+  const setNow = (src) => {
+    nowEl.textContent = src ? 'Now: ' + src : 'No track loaded.';
+  };
+
+  const loadSrc = (src) => {
+    if (!src) return;
+    audio.src = src;
+    localStorage.setItem(STORAGE_KEY, src);
+    setNow(src);
+  };
+
+  const open = () => {
+    if (!root.classList.contains('open')) root.classList.add('open');
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+  };
+  const closeSoon = () => {
+    if (hideTimer) clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => root.classList.remove('open'), 500);
+  };
+
+  // Restore last-used source, if any
+  const last = localStorage.getItem(STORAGE_KEY);
+  if (last) loadSrc(last);
+
+  // --- interactions -----------------------------------------------------
+  // Open on hover (tab or body), close 3s after leaving
+  [root, tab].forEach(el => {
+    el.addEventListener('mouseenter', open);
+    el.addEventListener('mouseleave', closeSoon);
+  });
+
+  // Also allow clicking the tab to toggle instantly
+  tab.addEventListener('click', () => {
+    if (root.classList.contains('open')) {
+      root.classList.remove('open');
+    } else {
+      open();
+    }
+  });
+
+  // Preset selection loads (but doesn’t auto-play)
+  preset.addEventListener('change', () => {
+    if (preset.value) {
+      loadSrc(preset.value);
+      urlInput.value = '';
+    }
+  });
+
+  // "Use" button: load from URL field
+  useBtn.addEventListener('click', () => {
+    const raw = urlInput.value.trim();
+    if (raw) {
+      loadSrc(raw);
+      preset.value = '';
+    }
+  });
+
+  // Playback controls
+  playBtn.addEventListener('click', async () => {
+    open(); // show while clicking play
+    try {
+      if (!audio.src) {
+        const candidate = urlInput.value.trim() || preset.value.trim();
+        if (!candidate) return;
+        loadSrc(candidate);
+      }
+      nowEl.textContent = 'Loading...'; // show loading message
+      await audio.play();
+    } catch (err) {
+      console.error(err);
+      nowEl.textContent = 'Couldn’t play. Is the URL direct to an audio file?';
+    }
+  });
+
+
+  pauseBtn.addEventListener('click', () => {
+    audio.pause();
+  });
+
+  stopBtn.addEventListener('click', () => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+
+  // Keep it from hiding while using controls
+  ['click','focusin','mousemove'].forEach(evt =>
+    root.addEventListener(evt, () => { if (root.classList.contains('open')) open(); })
+  );
+})();
+</script>
+
+<script>
+/*
+  Recently Played (max 3) — normalized + single-init
+  - Stores up to 3 items under 'recentlyPlayed'
+  - Normalizes hrefs to absolute to prevent duplicates
+  - Trims to newest 3
+  - Idempotent: won't double-initialize
+*/
+(() => {
+  if (window.__recentlyPlayedInit) return; // guard against double-run
+  window.__recentlyPlayedInit = true;
+
+  const KEY   = 'recentlyPlayed';
+  const LIMIT = 3;
+
+  // --- helpers ----------------------------------------------------------
+  const toAbs = (href) => new URL(href, location.href).href;
+
+  const safeLoad = () => {
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch { return []; }
+  };
+
+  const save = (arr) => localStorage.setItem(KEY, JSON.stringify(arr));
+
+  // normalize existing data once (absolute hrefs, dedupe, trim)
+  const normalizeStore = () => {
+    const seen = new Set();
+    const out  = [];
+    for (const item of safeLoad()) {
+      if (!item || !item.href) continue;
+      const abs = toAbs(item.href);
+      if (seen.has(abs)) continue;
+      seen.add(abs);
+      out.push({ href: abs, text: (item.text || '').trim() });
+    }
+    // newest are assumed first; if not, we still slice
+    if (out.length > LIMIT) out.length = LIMIT;
+    save(out);
+  };
+
+  // render UI
+  const render = () => {
+    const items = safeLoad();
+    const recentHeading = document.getElementById('recentHeading');
+    const recentWrap    = document.querySelector('.recent-list');
+    if (!recentHeading || !recentWrap) return;
+
+    recentWrap.innerHTML = '';
+    recentHeading.style.display = items.length ? 'block' : 'none';
+    recentWrap.style.display    = items.length ? 'block' : 'none';
+
+    items.forEach(({ href, text }) => {
+      const a = document.createElement('a');
+      a.href  = href;
+      a.innerHTML = `<b><p class="link">${text}</p></b>`;
+      recentWrap.appendChild(a);
+    });
+  };
+
+  // add a game to store (dedupe by absolute href, unshift newest, trim 3)
+  const add = (link) => {
+    const abs  = toAbs(link.getAttribute('href') || link.href || '');
+    const text = (link.textContent || '').trim();
+    if (!abs) return;
+
+    let arr = safeLoad().filter(i => i && toAbs(i.href) !== abs);
+    arr.unshift({ href: abs, text });
+    if (arr.length > LIMIT) arr = arr.slice(0, LIMIT);
+    save(arr);
+    render();
+  };
+
+  // search filter (unchanged behavior, safe if inputs missing)
+  const applyFilter = () => {
+    const searchInput = document.getElementById('gameSearch');
+    if (!searchInput) return;
+    const term = searchInput.value.trim().toLowerCase();
+    document.body.classList.toggle('searching', term.length > 0);
+
+    const gameLinks = document.querySelectorAll('.game-list a');
+    gameLinks.forEach(link => {
+      const show = !term || link.textContent.toLowerCase().includes(term);
+      link.style.display = show ? 'inline-block' : 'none';
+    });
+
+    const emuHeading = document.getElementById('emuHeading');
+    const emuLinks   = document.querySelectorAll('.emu-list a');
+    let anyEmu = false;
+    emuLinks.forEach(link => {
+      const match = !term || link.textContent.toLowerCase().includes(term);
+      link.style.display = match ? 'inline-block' : 'none';
+      if (match) anyEmu = true;
+    });
+    if (emuHeading) emuHeading.style.display = anyEmu ? 'block' : 'none';
+  };
+
+  // --- init on DOM ready ------------------------------------------------
+  document.addEventListener('DOMContentLoaded', () => {
+    // header animation (keeps your current behavior)
+    const hdr = document.getElementById('mainHeader');
+    if (hdr) hdr.classList.add('animated-in');
+
+    // normalize any existing data (fix old duplicates), then render
+    normalizeStore();
+    render();
+
+    // hook search
+    const searchInput = document.getElementById('gameSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilter);
+      applyFilter();
+    }
+
+    // hook all game links once
+    const gameLinks = document.querySelectorAll('.game-list a');
+    gameLinks.forEach(a => {
+      // avoid double-binding if some other script already attached
+      if (!a.dataset.rpBound) {
+        a.addEventListener('click', () => add(a));
+        a.dataset.rpBound = '1';
+      }
+    });
+
+    // final safety: if any other script overfilled, trim to 3
+    const trimmed = safeLoad().slice(0, LIMIT);
+    if (trimmed.length !== safeLoad().length) save(trimmed);
+  });
+})();
+</script>
+
+<script>
+/* === Cat-Nitro Settings (Tab Cloaker + Presets + Reset) — custom preset removed === */
+(() => {
+  // --- Grab elements ----------------------------------------------------
+  const btn       = document.getElementById('cn-settings-btn');
+  const panel     = document.getElementById('cn-settings-panel');
+  const backdrop  = document.getElementById('cn-settings-backdrop');
+  const closeBtn  = document.getElementById('cnSettingsClose');
+
+  const titleInp  = document.getElementById('cnTitle');
+  const iconInp   = document.getElementById('cnIcon');
+  const saveBtn   = document.getElementById('cnSave');
+  const applyBtn  = document.getElementById('cnApply');
+  const resetBtn  = document.getElementById('cnReset');
+
+  // Preset UI
+  const presetSel   = document.getElementById('cnPreset');
+  const presetApply = document.getElementById('cnPresetApply');
+  const presetSave  = document.getElementById('cnPresetSave');
+
+  // --- Storage keys -----------------------------------------------------
+  const KEY_TITLE    = 'cloak:title';
+  const KEY_ICON     = 'cloak:favicon';
+
+  // --- Defaults captured from the live page -----------------------------
+  const defaultTitle   = document.title;
+  const defaultIconEl  = document.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
+  const defaultIconHref= defaultIconEl ? defaultIconEl.getAttribute('href') : '';
+
+  // Ensure a favicon <link> exists we can control
+  const ensureFaviconEl = () => {
+    let el = document.querySelector('link[rel="icon"]');
+    if (!el) {
+      el = document.createElement('link');
+      el.setAttribute('rel', 'icon');
+      el.setAttribute('type', 'image/x-icon');
+      document.head.appendChild(el);
+    }
+    return el;
+  };
+
+  const setTitle = (t) => { document.title = t || defaultTitle; };
+  const setIcon  = (href) => { ensureFaviconEl().setAttribute('href', href || defaultIconHref || ''); };
+
+  // --- Cloak: load/apply/save/reset ------------------------------------
+  const loadSaved = () => ({
+    t: localStorage.getItem(KEY_TITLE),
+    i: localStorage.getItem(KEY_ICON)
+  });
+
+  const applyFromInputs = () => {
+    setTitle((titleInp?.value || '').trim() || defaultTitle);
+    setIcon((iconInp?.value || '').trim() || defaultIconHref);
+  };
+
+  const applyFromStorage = () => {
+    const { t, i } = loadSaved();
+    setTitle(t || defaultTitle);
+    setIcon(i || defaultIconHref);
+    if (titleInp) titleInp.value = t || defaultTitle;
+    if (iconInp)  iconInp.value  = i || defaultIconHref;
+  };
+
+  const saveSettings = () => {
+    const t = (titleInp?.value || '').trim() || defaultTitle;
+    const i = (iconInp?.value  || '').trim()  || defaultIconHref;
+    localStorage.setItem(KEY_TITLE, t);
+    localStorage.setItem(KEY_ICON,  i);
+    applyFromStorage();
+  };
+
+  const resetSettings = () => {
+    localStorage.removeItem(KEY_TITLE);
+    localStorage.removeItem(KEY_ICON);
+    setTitle(defaultTitle);
+    setIcon(defaultIconHref);
+    if (titleInp) titleInp.value = defaultTitle;
+    if (iconInp)  iconInp.value  = defaultIconHref;
+  };
+
+  // --- Presets (defaults only) ---------------------------------
+  const DEFAULT_PRESETS = [
+    { key: 'google',     name: 'Google',     title: 'Google',     icon: 'assets/img/Google-favicon.png' },
+    { key: 'youtube',    name: 'YouTube',    title: 'YouTube',    icon: 'assets/img/youtube.png' },
+    { key: 'schoology',  name: 'Schoology',  title: 'Schoology',  icon: 'assets/img/schoology.ico' }
+  ];
+
+  const getAllPresets = () => DEFAULT_PRESETS;
+
+  const buildOption = (p) => {
+    const opt = document.createElement('option');
+    opt.value = p.key;
+    opt.textContent = p.name || p.title || p.key;
+    opt.dataset.title = p.title || p.name || '';
+    opt.dataset.icon  = p.icon  || '';
+    return opt;
+  };
+
+  const populatePresetSelect = () => {
+    if (!presetSel) return;
+    presetSel.innerHTML = '<option value="">— Select a preset —</option>';
+    const all = getAllPresets();
+    all.forEach(p => presetSel.appendChild(buildOption(p)));
+  };
+
+  const applyPreset = (mode /* 'apply'|'save' */) => {
+    if (!presetSel || !presetSel.value) return;
+    const opt = presetSel.selectedOptions[0];
+    const pTitle = opt?.dataset?.title || '';
+    const pIcon  = opt?.dataset?.icon  || '';
+    if (titleInp) titleInp.value = pTitle;
+    if (iconInp)  iconInp.value  = pIcon;
+    if (mode === 'save') saveSettings(); else applyFromInputs();
+  };
+
+  // --- Panel open/close -------------------------------------------------
+  const showPanel = () => {
+    if (!panel || !backdrop) return;
+    panel.hidden = false;
+    backdrop.hidden = false;
+    requestAnimationFrame(() => {
+      panel.classList.add('open');
+      backdrop.classList.add('open');
+    });
+  };
+  const hidePanel = () => {
+    if (!panel || !backdrop) return;
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    setTimeout(() => { panel.hidden = true; backdrop.hidden = true; }, 200);
+  };
+
+  // --- Events -----------------------------------------------------------
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      if (e.shiftKey) console.info('[Settings] Forced open via Shift+Click');
+      showPanel();
+    });
+  }
+
+  closeBtn  ?.addEventListener('click', hidePanel);
+  backdrop  ?.addEventListener('click', hidePanel);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel && !panel.hidden) hidePanel();
+  });
+
+  saveBtn  ?.addEventListener('click', saveSettings);
+  applyBtn ?.addEventListener('click', applyFromInputs);
+  resetBtn ?.addEventListener('click', resetSettings);
+
+  presetApply?.addEventListener('click', () => applyPreset('apply'));
+  presetSave ?.addEventListener('click', () => applyPreset('save'));
+
+  // --- Init -------------------------------------------------------------
+  const init = () => {
+    populatePresetSelect();
+    applyFromStorage();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
+</script>
+
+
+<!-- CN OVERLAY: START -->
+<div id="cn-io" class="cn-io" aria-hidden="true" hidden>
+  <div class="cn-io__chrome" role="toolbar" aria-label="Game controls">
+    <div class="cn-io__title" id="cnIoTitle">Loading…</div>
+    <div class="cn-io__spacer"></div>
+
+    <!-- Ko-fi button (top bar) -->
+    <a class="cn-io__btn cn-io__btn--kofi" id="cnIoKoFi"
+       href="https://ko-fi.com/catman6112" target="_blank" rel="noopener"
+       title="Support on Ko-fi" aria-label="Support on Ko-fi">♥ Ko-fi</a>
+
+    <button class="cn-io__btn" id="cnIoFullscreen" title="Fullscreen" aria-label="Fullscreen">⤢</button>
+    <button class="cn-io__btn" id="cnIoMin" title="Minimize" aria-label="Minimize"></button> 
+    <button class="cn-io__btn cn-io__btn--danger" id="cnIoClose" title="Close" aria-label="Close">✕</button>
+  </div>
+
+  <div class="cn-io__content">
+    <!-- IMPORTANT: this iframe must exist and fill the content area -->
+    <iframe id="cnIoFrame" src="" allow="autoplay; fullscreen; clipboard-read; clipboard-write"
+            allowfullscreen loading="eager" referrerpolicy="no-referrer"
+            style="position:absolute; inset:0; width:100%; height:100%; border:0; background:#000;"></iframe>
+  </div>
+</div>
+
+<!-- Minimized strip -->
+<div id="cn-io-mini" role="status" aria-hidden="true" hidden>
+  <div class="cn-io-mini__title" id="cnIoMiniTitle">Game running…</div>
+  <div class="cn-io-mini__spacer"></div>
+
+  <!-- Ko-fi button on the mini strip -->
+  <a class="cn-io-mini__btn cn-io-mini__btn--kofi" id="cnIoMiniKoFi"
+     href="https://ko-fi.com/catman6112" target="_blank" rel="noopener"
+     title="Support on Ko-fi" aria-label="Support on Ko-fi">♥</a>
+
+  <button class="cn-io-mini__btn" id="cnIoMiniRestore" title="Restore" aria-label="Restore">▣</button>
+  <button class="cn-io-mini__btn" id="cnIoMiniFullscreen" title="Fullscreen" aria-label="Fullscreen">⤢</button>
+  <button class="cn-io-mini__btn cn-io-mini__btn--danger" id="cnIoMiniClose" title="Close" aria-label="Close">✕</button>
+</div>
+<!-- CN OVERLAY: END -->
+
+
+<!-- Bottom bubble -->
+<div id="cn-io-blocker" aria-live="polite">
+  <div class="cn-io-blocker__msg" id="cnIoBubble">Close your game to select another! (Esc)</div>
+</div>
+
+<script>
+/* ===== Cat-Nitro: IFRAME Overlay (music gutter + failsafes) ===== */
+(() => {
+  const OVERLAY   = document.getElementById('cn-io');
+  const FRAME     = document.getElementById('cnIoFrame');
+  const TITLE     = document.getElementById('cnIoTitle');
+
+  const MINI      = document.getElementById('cn-io-mini');
+  const MINI_T    = document.getElementById('cnIoMiniTitle');
+
+  const BTN_FS    = document.getElementById('cnIoFullscreen');
+  const BTN_MIN   = document.getElementById('cnIoMin');
+  const BTN_CLOSE = document.getElementById('cnIoClose');
+
+  const MINI_REST = document.getElementById('cnIoMiniRestore');
+  const MINI_FS   = document.getElementById('cnIoMiniFullscreen');
+  const MINI_CLOSE= document.getElementById('cnIoMiniClose');
+
+  const BUBBLE    = document.getElementById('cn-io-blocker');
+  let bubbleScrollHandler = null, bubbleResizeHandler = null;
+
+const positionBubbleFromTargets = () => {
+  if (!BUBBLE) return;
+
+  const RG = getRightGutter();        // leave space for music widget on right
+  const MG = getMiniGutter();         // leave space for mini strip at bottom
+
+  const targets = document.querySelectorAll(TARGET_SELECTORS.join(','));
+  let top = Infinity, left = Infinity, right = -Infinity, bottom = -Infinity, any = false;
+
+  targets.forEach(el => {
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden') return;
+    const r = el.getBoundingClientRect();
+    if (!r.width && !r.height) return;
+    any = true;
+    left   = Math.min(left,   r.left);
+    top    = Math.min(top,    r.top);
+    right  = Math.max(right,  r.right);
+    bottom = Math.max(bottom, r.bottom);
+  });
+
+  const vw = window.innerWidth, vh = window.innerHeight;
+
+  if (!any) {
+    // Fallback: fill viewport minus header + gutters
+    const header = document.getElementById('mainHeader');
+    const hdrB = header ? header.getBoundingClientRect().bottom : 0;
+    left = 0;
+    top = hdrB + 10;
+    right = vw - RG;
+    bottom = vh - MG - 10;
+  } else {
+    right  = Math.min(right,  vw - RG);
+    bottom = Math.min(bottom, vh - MG);
+    left   = Math.max(0, left);
+    top    = Math.max(0, top);
+  }
+
+  const w = Math.max(0, right - left);
+  const h = Math.max(0, bottom - top);
+
+  BUBBLE.style.left = left + 'px';
+  BUBBLE.style.top = top + 'px';
+  BUBBLE.style.width = w + 'px';
+  BUBBLE.style.height = h + 'px';
+};
+  const BUBBLE_BTN= document.getElementById('cnIoBubble');
+
+  const KEY = 'cn:iframe:state'; // { url, title, state: 'open'|'min'|'closed' }
+  const save  = (s) => localStorage.setItem(KEY, JSON.stringify(s));
+  const load  = () => { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } };
+  const clear = () => localStorage.removeItem(KEY);
+
+  let state = { url: '', title: '', state: 'closed' };
+
+  const setTitle = (t) => {
+    TITLE.textContent  = t || 'Loading…';
+    MINI_T.textContent = t ? ('Now playing: ' + t) : 'Game running…';
+  };
+  const guessTitleFromUrl = (u) => {
+    try {
+      const p = new URL(u, location.href).pathname.split('/').filter(Boolean);
+      let last = p[p.length-1] || '';
+      last = last.replace(/index\\.html?$/i,'').replace(/\\.[a-z0-9]+$/i,'').replace(/[-_]+/g,' ').trim();
+      return last ? last[0].toUpperCase() + last.slice(1) : 'Game';
+    } catch { return 'Game'; }
+  };
+
+  const isOpen = () => OVERLAY.classList.contains('open');
+  const isMin  = () => MINI.classList.contains('show');
+
+  const ScrollLock = (() => {
+  let y = 0;
+  let paddingApplied = false;
+  const isiOS = /iP(ad|hone|od)/.test(navigator.userAgent);
+
+  return {
+    lock() {
+      if (document.documentElement.classList.contains('cn-io-scrolllock')) return;
+
+      // Remember scroll position
+      y = window.scrollY;
+
+      // Avoid layout shift when scrollbar disappears (on desktop)
+      const sbw = window.innerWidth - document.documentElement.clientWidth;
+      if (sbw > 0) {
+        document.body.style.paddingRight = sbw + 'px';
+        paddingApplied = true;
+      }
+
+      document.documentElement.classList.add('cn-io-scrolllock');
+      document.body.classList.add('cn-io-scrolllock');
+
+      // iOS fix: overflow hidden on body doesn't stop scroll, so pin it
+      if (isiOS) {
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${y}px`;
+        document.body.style.width = '100%';
+      }
+    },
+
+    unlock() {
+      document.documentElement.classList.remove('cn-io-scrolllock');
+      document.body.classList.remove('cn-io-scrolllock');
+
+      if (paddingApplied) {
+        document.body.style.paddingRight = '';
+        paddingApplied = false;
+      }
+
+      if (isiOS) {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, y);
+      }
+    }
+  };
+})();
+
+  // --- music gutter + mini gutter measurements --------------------------
+  const getRightGutter = () => {
+    const mw = document.getElementById('musicWidget');
+    if (!mw) return 0;
+    const r = mw.getBoundingClientRect();
+    // leave full panel width + a little breathing room even when it's slid in
+    return Math.ceil(r.width + 16);
+  };
+  const getMiniGutter = () => {
+    if (!MINI || !isMin()) return 0;
+    const r = MINI.getBoundingClientRect();
+    return Math.ceil(r.height + 16 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom')||'0')||0));
+  };
+
+  // --- targeted covers that never touch the music gutter -----------------
+  const TARGET_SELECTORS = ['.recent-list','#recentHeading','.game-list','#emuHeading','.emu-list'];
+  let covers = [], onScrollBound = null, onResizeBound = null;
+
+  const rectOf = (el) => el.getBoundingClientRect();
+  const placeCover = (cover, r) => {
+    // carve out a right gutter for the music widget
+    const RG = getRightGutter();
+    const maxRight = window.innerWidth - RG;
+    const left = r.left;
+    const top  = r.top;
+    const width = Math.max(0, Math.min(r.width, Math.max(0, maxRight - left)));
+    // carve out a bottom gutter for the mini strip
+    const MG = getMiniGutter();
+    const maxBottom = window.innerHeight - MG;
+    const height = Math.max(0, Math.min(r.height, Math.max(0, maxBottom - top)));
+
+    cover.style.left   = left + 'px';
+    cover.style.top    = top  + 'px';
+    cover.style.width  = width + 'px';
+    cover.style.height = height + 'px';
+  };
+  const buildCover = (el) => {
+    const c = document.createElement('div');
+    c.className = 'cn-cover';
+    c.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); showBubble(); });
+    document.body.appendChild(c);
+    placeCover(c, rectOf(el));
+    return c;
+  };
+  const updateCovers = () => {
+    const targets = document.querySelectorAll(TARGET_SELECTORS.join(','));
+    let i = 0;
+    targets.forEach(el => {
+      const cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return;
+      const r = rectOf(el);
+      if (!covers[i]) covers[i] = buildCover(el);
+      placeCover(covers[i], r);
+      i++;
+    });
+    for (let j = i; j < covers.length; j++) covers[j].remove();
+    covers.length = i;
+    positionBubbleFromTargets();
+  };
+  const showCovers = () => {
+    hideCovers();
+    updateCovers();
+    onScrollBound = () => updateCovers();
+    onResizeBound = () => updateCovers();
+    window.addEventListener('scroll', onScrollBound, { passive:true });
+    window.addEventListener('resize', onResizeBound);
+  };
+  const hideCovers = () => {
+    covers.forEach(c => c.remove()); covers = [];
+    if (onScrollBound) window.removeEventListener('scroll', onScrollBound);
+    if (onResizeBound) window.removeEventListener('resize', onResizeBound);
+    onScrollBound = onResizeBound = null;
+  };
+
+  // --- state transitions -------------------------------------------------
+  const ensureMiniVisible = () => {
+    if (!isMin()) return;
+    // force an on-screen position if some external CSS janks it
+    MINI.style.bottom = 'calc(env(safe-area-inset-bottom, 0px) + 12px)';
+    MINI.style.transform = 'translateY(0)';
+    // also refresh covers to respect new mini height
+    updateCovers();
+  };
+
+  const showOverlay = () => {
+    OVERLAY.classList.add('open');
+    ScrollLock.lock();
+    MINI.classList.remove('show');
+    document.body.classList.remove('cn-io-min');
+    hideCovers(); hideBubble();
+    save(state = { ...state, state: 'open' });
+  };
+  const minimizeOverlay = () => {
+    if (!isOpen()) return;
+    OVERLAY.classList.remove('open');
+    MINI.classList.add('show');
+    document.body.classList.add('cn-io-min');
+    showCovers(); showBubble();
+    ensureMiniVisible();
+    save(state = { ...state, state: 'min' });
+    ScrollLock.unlock();
+  };
+  const closeOverlay = () => {
+    ScrollLock.unlock();
+    OVERLAY.classList.remove('open');
+    MINI.classList.remove('show');
+    document.body.classList.remove('cn-io-min');
+    hideCovers(); hideBubble();
+    FRAME.removeAttribute('src');
+    setTitle('');
+    clear();
+    state = { url:'', title:'', state:'closed' };
+  };
+
+const toggleFullscreen = async () => {
+  // Only allow fullscreen when the overlay is visible (maximized)
+  if (!isOpen()) return;
+
+  try {
+    if (!document.fullscreenElement) {
+      await OVERLAY.requestFullscreen?.();
+    } else {
+      await document.exitFullscreen?.();
+    }
+  } catch (e) { console.warn('Fullscreen error', e); }
+};
+
+  const showBubble = () => {
+  BUBBLE?.classList.add('show');
+};
+  if (!bubbleScrollHandler) {
+    bubbleScrollHandler = () => positionBubbleFromTargets();
+    bubbleResizeHandler = () => positionBubbleFromTargets();
+    window.addEventListener('scroll', bubbleScrollHandler, { passive:true });
+    window.addEventListener('resize', bubbleResizeHandler);
+  };
+
+  const hideBubble = () => {
+  BUBBLE?.classList.remove('show');
+};
+
+  if (bubbleScrollHandler) {
+    window.removeEventListener('scroll', bubbleScrollHandler);
+    bubbleScrollHandler = null;
+  }
+  if (bubbleResizeHandler) {
+    window.removeEventListener('resize', bubbleResizeHandler);
+    bubbleResizeHandler = null;
+  };
+
+  const openOverlay = (url, title='') => {
+    if (!url) return;
+    const sameAsCurrent = state.url && new URL(state.url, location.href).href === new URL(url, location.href).href;
+
+    if ((isOpen() || isMin()) && state.url && !sameAsCurrent) {
+      // Different game while one is running: block + hint
+      showCovers(); showBubble(); ensureMiniVisible();
+      return;
+    }
+
+    if (!sameAsCurrent) FRAME.src = url;
+    state = { url, title: title || guessTitleFromUrl(url), state: 'open' };
+    setTitle(state.title);
+    showOverlay();
+  };
+
+  // --- Buttons -----------------------------------------------------------
+  BTN_FS    .addEventListener('click', toggleFullscreen);
+  BTN_MIN   .addEventListener('click', minimizeOverlay);
+  BTN_CLOSE .addEventListener('click', closeOverlay);
+ // MINI_REST .addEventListener('click', showOverlay);
+ // MINI_FS.addEventListener('click', (e) => e.preventDefault());
+ // MINI_CLOSE.addEventListener('click', closeOverlay);
+  BUBBLE_BTN.addEventListener('click', showOverlay);
+
+  // --- Hotkeys (quality of life) ----------------------------------------
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeOverlay();
+    if (e.key === 'Enter' && e.ctrlKey) showOverlay();
+    //if (e.key === 'm' && e.ctrlKey) minimizeOverlay();
+  });
+
+  // Intercept internal game links only
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('.game-list a, .recent-list a, .emu-list a');
+    if (!a) return;
+
+    const href = a.getAttribute('href') || a.href;
+    const isExternal = /^https?:\/\//i.test(href) && !href.startsWith(location.origin);
+    if (isExternal) return; // let true externals navigate
+
+    e.preventDefault();
+
+    if ((isOpen() || isMin()) && state.url && new URL(state.url, location.href).href !== new URL(href, location.href).href) {
+      showCovers(); showBubble(); ensureMiniVisible();
+      return;
+    }
+
+    openOverlay(href, (a.textContent || '').trim());
+
+    // keep “recently played” logic small + safe (your main script already limits to 3)
+    try {
+      const KEY='recentlyPlayed';
+      const toAbs=(u)=>new URL(u,location.href).href;
+      const saveList=(arr)=>localStorage.setItem(KEY, JSON.stringify(arr));
+      const loadList=()=>JSON.parse(localStorage.getItem(KEY)||'[]');
+      const abs=toAbs(href);
+      let list = loadList().filter(i => i && toAbs(i.href)!==abs);
+      list.unshift({href:abs, text:(a.textContent||'').trim()||href});
+      if (list.length>10) list = list.slice(0,10);
+      saveList(list);
+    }catch(_e){}
+  }, {capture:true});
+
+  // Restore previous session on load
+  // Restore previous session on load (force open; minimize disabled)
+  document.addEventListener('DOMContentLoaded', () => {
+    const prev = load();
+    if (!prev || !prev.url) return;
+    FRAME.src = prev.url;
+    state = { ...prev, state: 'open' };
+    setTitle(prev.title || guessTitleFromUrl(prev.url));
+    showOverlay();
+    save(state); // persist 'open' so it won't try to minimize next time
+  });
+
+})();
+</script>
+<!-- === CN OVERLAY: END === -->
+
+
+<script>
+/*
+  MOTD logic with spawn/close + type/erase (Bezier-shaped speed boost)
+  - Minimum speeds preserved: 22ms (type-in), 16ms (type-out)
+  - Middle of the message types faster, ends stay at min speed
+*/
+(() => {
+  if (window.__motdInit) return; // guard against double-initialization
+  window.__motdInit = true;
+
+  const motd   = document.getElementById('motd');
+  if (!motd) return;
+
+  const inner  = motd.querySelector('.motd__inner');
+  const close  = motd.querySelector('#motdClose');
+  const textEl = document.getElementById('motdText');
+
+  const KEY = 'motd:dismissed';
+  const ver = motd.getAttribute('data-version') || 'v1';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (localStorage.getItem(KEY) === ver) {
+    motd.style.display = 'none';
+    return;
+  }
+
+  const fullText = (textEl?.getAttribute('data-text') || '').trim();
+
+  /* ---------------- Bezier helpers ---------------- */
+
+  // Cubic Bezier evaluator for (0,0) -> (1,1) with control points (x1,y1),(x2,y2).
+  // We only need the y given a parameter t in [0,1].
+  function cubicBezierY(t, x1, y1, x2, y2) {
+    // De Casteljau on y only (x is not needed because we don't invert time)
+    const u = 1 - t;
+    return (u*u*u)*0 + 3*(u*u)*t*y1 + 3*u*(t*t)*y2 + (t*t*t)*1;
+  }
+
+  // Bell-shaped boost from a monotonic ease curve: bell(p) = 4 * e(p) * (1 - e(p))
+  // Peaks near the middle, zero at ends. Range [0..1].
+  function bellFromEase(p, x1, y1, x2, y2) {
+    const e = cubicBezierY(p, x1, y1, x2, y2); // 0..1, slow->fast->slow slope
+    return 4 * e * (1 - e);
+  }
+
+  // Schedules typing with variable per-char delay derived from Bezier-shaped boost.
+  async function typeWithCurve(targetText, opts) {
+    const {
+      minDelay = 22,          // ms  (your current speed-in)
+      maxBoost = 0.6,         // 0..1 (how much faster at peak; 0.6 => up to 40% of minDelay)
+      x1 = 0.2, y1 = 0.0,     // control points ~ease-in-out
+      x2 = 0.2, y2 = 1.0,
+      erase = false
+    } = opts || {};
+
+    // If motion reduced or trivial, just snap to end state.
+    if (reduce || !targetText.length) {
+      textEl.textContent = erase ? '' : targetText;
+      textEl.classList.remove('is-typing');
+      return;
+    }
+
+    textEl.classList.add('is-typing');
+
+    const N = targetText.length;
+    // We build a per-step delay table. Ends get delay≈minDelay; middle gets shorter delay.
+    const delays = Array.from({ length: N }, (_, i) => {
+      const p = N <= 1 ? 1 : i / (N - 1);             // progress 0..1
+      const bell = bellFromEase(p, x1, y1, x2, y2);   // 0..1, peak mid
+      const speedup = maxBoost * bell;                // 0 at ends, max mid
+      const delay = Math.max(1, Math.round(minDelay * (1 - speedup)));
+      return delay;                                   // NEVER slower than minDelay
+    });
+
+    // We'll loop with setTimeout scheduling using those delays.
+    await new Promise((resolve) => {
+      let i = erase ? (textEl.textContent || '').length : 0;
+
+      const tick = () => {
+        if (!erase) {
+          // TYPE IN
+          textEl.textContent = targetText.slice(0, i);
+          if (i >= N) {
+            textEl.classList.remove('is-typing');
+            resolve();
+            return;
+          }
+          const d = delays[i]; // use delay for this step
+          i++;
+          setTimeout(tick, d);
+        } else {
+          // TYPE OUT
+          textEl.textContent = targetText.slice(0, i);
+          if (i <= 0) {
+            textEl.classList.remove('is-typing');
+            resolve();
+            return;
+          }
+          // Mirror the same delays so close-out has the same curve
+          const idx = Math.max(0, Math.min(N - 1, i - 1));
+          const d = delays[idx];
+          i--;
+          setTimeout(tick, d);
+        }
+      };
+
+      // Start index for erase vs type
+      if (erase) {
+        i = textEl.textContent.length;
+      } else {
+        i = 0;
+      }
+      setTimeout(tick, 0);
+    });
+  }
+
+  /* --------------- Public-ish helpers (replacing old typeIn/typeOut) --------------- */
+
+  function typeInBezier(text) {
+    // minDelay 22ms = your current type-in (minimum speed = current)
+    return typeWithCurve(text, { minDelay: 22, maxBoost: 0.6, erase: false });
+  }
+
+  function typeOutBezier() {
+    // minDelay 16ms = your current type-out (minimum speed = current)
+    const current = textEl.textContent || '';
+    return typeWithCurve(current, { minDelay: 16, maxBoost: 0.6, erase: true });
+  }
+
+  /* ---------------- Open / Close sequencing (unchanged, but calling new helpers) ---------------- */
+
+  function openMotd() {
+    motd.classList.remove('is-closing');
+    motd.classList.add('is-open');
+
+    if (reduce) {
+      textEl.textContent = fullText;
+      return;
+    }
+    const onEnd = (e) => {
+      if (e.animationName !== 'motd-expand') return;
+      inner.removeEventListener('animationend', onEnd);
+      // Use Bezier-boosted typing
+      typeInBezier(fullText);
+    };
+    inner.addEventListener('animationend', onEnd);
+  }
+
+  async function closeMotd() {
+    await typeOutBezier();
+    motd.classList.remove('is-open');
+    motd.classList.add('is-closing');
+    const onEnd = () => {
+      inner.removeEventListener('animationend', onEnd);
+      motd.style.display = 'none';
+      localStorage.setItem(KEY, ver);
+    };
+    inner.addEventListener('animationend', onEnd);
+  }
+
+  if (close) {
+    close.addEventListener('click', () => {
+      if (!motd.classList.contains('is-closing')) closeMotd();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', openMotd, { once: true });
+  } else {
+    openMotd();
+  }
+})();
+</script>
+
+
+
+</body>
+</html>
