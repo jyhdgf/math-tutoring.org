@@ -103,7 +103,7 @@
     --glass: rgba(15, 23, 42, 0.9);
 
     --shadow-lg: 0 0 25px rgba(0, 224, 255, 0.4);
-    --shadow-xl: 0 0 50px rgba(0, 224, 255, 0.5);
+    --shadow-xl: 0 0 20px rgba(0, 224, 255, 0.35);
 
     --gradient-primary: linear-gradient(135deg, #00e0ff 0%, #007cf0 100%);
     --gradient-accent: linear-gradient(135deg, #ff00c8 0%, #8b00ff 100%);
@@ -121,10 +121,13 @@ body {
     padding: 0;
     background: var(--bg);
     color: var(--text);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 0.3s ease, color 0.3s ease;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    position: relative;
+    overflow-x: hidden;
 }
 
 header {
@@ -134,7 +137,7 @@ header {
     top: 0;
     z-index: 100;
     box-shadow: var(--shadow-lg);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
 }
 
 .header-content {
@@ -170,11 +173,11 @@ header {
     border: 0;
     border-radius: var(--radius);
     background: var(--glass);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
     color: var(--text);
     font-size: 15px;
     outline: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 0.3s ease, color 0.3s ease;
     box-shadow: var(--shadow-sm);
 }
 
@@ -194,7 +197,7 @@ header {
     border: 0;
     border-radius: var(--radius);
     background: var(--glass);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
     color: var(--text-muted);
     font-size: 15px;
     cursor: pointer;
@@ -230,7 +233,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
 }
 
 #settings:hover {
@@ -414,7 +417,7 @@ main {
     font-size: 14px;
     font-weight: 600;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
 }
 
 .zone-controls button:hover {
@@ -507,7 +510,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
 }
 
 #popupClose:hover {
@@ -645,6 +648,28 @@ footer {
         transform: translateY(-4px) scale(1.01);
     }
 }
+    /* ===== Neon Animated Background ===== */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(0,224,255,0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255,0,200,0.15), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0,124,240,0.1), transparent 50%);
+    animation: neonMove 12s linear infinite alternate;
+    z-index: -1;
+}
+
+@keyframes neonMove {
+    0% {
+        transform: translateY(0px) translateX(0px);
+    }
+    100% {
+        transform: translateY(-40px) translateX(30px);
+    }
+}
+    
     </style>
 </head>
 <body class="dark-mode">
