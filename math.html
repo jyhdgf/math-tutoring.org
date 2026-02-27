@@ -77,106 +77,40 @@
 
 /* ===== 🌈 RAINBOW MODE ===== */
 
-.rainbow-mode {
-    --primary: #ff0080;
-    --primary-hover: #ff4da6;
-    --primary-light: rgba(255, 0, 128, 0.25);
-    --primary-lighter: rgba(255, 0, 128, 0.15);
+.dark-mode {
+    --primary: #00e0ff;
+    --primary-hover: #33f0ff;
+    --primary-light: rgba(0, 224, 255, 0.2);
+    --primary-lighter: rgba(0, 224, 255, 0.1);
 
-    --accent: #00e0ff;
-    --accent-light: rgba(0, 224, 255, 0.25);
+    --accent: #ff00c8;
+    --accent-light: rgba(255, 0, 200, 0.2);
 
     --success: #00ff88;
     --warning: #ffaa00;
 
-    --text: #ffffff;
-    --text-muted: #d0d8ff;
-    --text-light: #aab3ff;
+    --text: #e6faff;
+    --text-muted: #8aa0b8;
+    --text-light: #5c6f82;
 
-    --bg: #0b0014;
-    --bg-secondary: #140022;
+    --bg: #070c18;
+    --bg-secondary: #0f172a;
 
-    --surface: #1a0033;
-    --surface-hover: #24004a;
+    --surface: #111a2e;
+    --surface-hover: #1b2a44;
 
-    --border: #330066;
-    --border-light: #4d0080;
+    --border: #1b2a44;
+    --border-light: #243656;
 
-    --glass: rgba(25, 0, 50, 0.85);
+    --glass: rgba(15, 23, 42, 0.9);
 
-    --shadow-lg: 0 0 30px rgba(255, 0, 255, 0.6);
-    --shadow-xl: 0 0 40px rgba(0, 224, 255, 0.6);
+    --shadow-lg: 0 0 25px rgba(0, 224, 255, 0.4);
+    --shadow-xl: 0 0 20px rgba(0, 224, 255, 0.35);
 
-    --gradient-primary: linear-gradient(
-        270deg,
-        #ff0000,
-        #ff8000,
-        #ffff00,
-        #00ff00,
-        #00e0ff,
-        #0000ff,
-        #ff00ff,
-        #ff0000
-    );
-
-    --gradient-accent: linear-gradient(
-        270deg,
-        #ff00ff,
-        #00e0ff,
-        #00ff88,
-        #ffaa00,
-        #ff0080
-    );
-
-    --gradient-surface: linear-gradient(
-        135deg,
-        #1a0033 0%,
-        #330066 50%,
-        #24004a 100%
-    );
+    --gradient-primary: linear-gradient(135deg, #00e0ff 0%, #007cf0 100%);
+    --gradient-accent: linear-gradient(135deg, #ff00c8 0%, #8b00ff 100%);
+    --gradient-surface: linear-gradient(135deg, #111a2e 0%, #1b2a44 100%);
 }
-
-/* 🌈 Animated rainbow background */
-body.rainbow-mode::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(
-        270deg,
-        #ff0000,
-        #ff8000,
-        #ffff00,
-        #00ff00,
-        #00e0ff,
-        #0000ff,
-        #ff00ff,
-        #ff0000
-    );
-    background-size: 800% 800%;
-    animation: rainbowFlow 15s ease infinite;
-    opacity: 0.08;
-    z-index: -1;
-}
-
-@keyframes rainbowFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Animate gradient elements */
-.rainbow-mode header,
-.rainbow-mode .zone-header,
-.rainbow-mode #settings-button {
-    background-size: 300% 300%;
-    animation: rainbowShift 6s linear infinite;
-}
-
-@keyframes rainbowShift {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
-}
-
 * {
     box-sizing: border-box;
 }
