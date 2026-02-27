@@ -39,6 +39,22 @@ body {
     overflow: hidden;
 }
 
+/* 🔙 Back Arrow */
+.back-btn {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    font-size: 1.8rem;
+    text-decoration: none;
+    color: var(--primary);
+    transition: 0.3s ease;
+}
+
+.back-btn:hover {
+    color: var(--accent);
+    text-shadow: 0 0 15px var(--primary);
+}
+
 /* Animated neon background */
 body::before {
     content: "";
@@ -120,6 +136,8 @@ h1 {
 </head>
 
 <body>
+
+<a href="book-tutor.html" class="back-btn">←</a>
 
 <div class="container">
     <h1>Select Destination</h1>
