@@ -178,28 +178,25 @@ nav a:hover{
         font-size:2.2rem;
     }
 }
-/* 🤫 Secret Arrow */
-.secret-pointer{
-    display:inline-block;
-    margin-bottom:1rem;
-    font-weight:600;
-    font-size:1rem;
-    animation: floaty 1.5s ease-in-out infinite;
+/* Clean Down Arrow */
+.arrow-wrapper{
+    display:flex;
+    justify-content:center;
+    margin-bottom:0.5rem;
 }
 
 .arrow-down{
     width:0;
     height:0;
-    margin:0.4rem auto 0;
-    border-left:10px solid transparent;
-    border-right:10px solid transparent;
-    border-top:15px solid white;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:20px solid white;
+    animation:bounce 1.4s infinite;
 }
 
-@keyframes floaty{
-    0%{ transform:translateY(0); }
-    50%{ transform:translateY(-6px); }
-    100%{ transform:translateY(0); }
+@keyframes bounce{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
 }
 </style>
 </head>
@@ -219,10 +216,9 @@ nav a:hover{
 
 <section class="hero">
     <h1>Professional Online Math Tutoring Nationwide</h1>
-    <p>Personalized 1-on-1 tutoring...</p>
+    <p>Personalized 1-on-1 tutoring for students in elementary, middle school, high school, and college. Improve grades, build confidence, and achieve academic success.</p>
 
-    <div class="secret-pointer">
-        🤫 shhhh
+    <div class="arrow-wrapper">
         <div class="arrow-down"></div>
     </div>
 
@@ -294,6 +290,7 @@ nav a:hover{
 
 </body>
 </html>
+
 
 
 
