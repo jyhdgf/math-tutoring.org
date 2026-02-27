@@ -178,6 +178,29 @@ nav a:hover{
         font-size:2.2rem;
     }
 }
+/* 🤫 Secret Arrow */
+.secret-pointer{
+    display:inline-block;
+    margin-bottom:1rem;
+    font-weight:600;
+    font-size:1rem;
+    animation: floaty 1.5s ease-in-out infinite;
+}
+
+.arrow-down{
+    width:0;
+    height:0;
+    margin:0.4rem auto 0;
+    border-left:10px solid transparent;
+    border-right:10px solid transparent;
+    border-top:15px solid white;
+}
+
+@keyframes floaty{
+    0%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+    100%{ transform:translateY(0); }
+}
 </style>
 </head>
 
@@ -196,7 +219,13 @@ nav a:hover{
 
 <section class="hero">
     <h1>Professional Online Math Tutoring Nationwide</h1>
-    <p>Personalized 1-on-1 tutoring for students in elementary, middle school, high school, and college. Improve grades, build confidence, and achieve academic success.</p>
+    <p>Personalized 1-on-1 tutoring...</p>
+
+    <div class="secret-pointer">
+        🤫 shhhh
+        <div class="arrow-down"></div>
+    </div>
+
     <a href="book-tutor.html" class="cta">Book a Tutor</a>
 </section>
 
@@ -265,6 +294,7 @@ nav a:hover{
 
 </body>
 </html>
+
 
 
 
